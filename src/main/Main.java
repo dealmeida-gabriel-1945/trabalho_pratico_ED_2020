@@ -20,10 +20,19 @@ public class Main {
 
         porto.popula(rand);
         showAll(porto);
+        calculaAll(porto);
+        showAll(porto);
+    }
+
+    public static void calculaAll(Porto portoOriginal){
+        Porto porto = Porto.clona(portoOriginal);
+        System.out.println("\n\n\n\n");
+        Porto.work(porto);
+        porto.show();
     }
 
     public static void showAll(Porto portoOriginal){
-        Porto porto = new Porto(portoOriginal);
-        Porto.show(porto);
+        Porto porto = Porto.clona(portoOriginal);
+        porto.show();
     }
 }

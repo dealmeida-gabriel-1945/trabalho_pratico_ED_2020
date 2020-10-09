@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Navio {
     public String nome;
     public Long tempo;
+    public boolean trabalhado = false;
     public int qtdContainer;
 
     public ArrayList<PilhaContainer> pilhasDeContainers = new ArrayList<PilhaContainer>();
@@ -51,7 +52,16 @@ public class Navio {
         System.out.println("\t\t\tQUANTIDADE DE CONTAINERS: " + navio.qtdContainer);
         for (int i = 0; i < Constantes.MAX_QTD_PILHA_DE_CONTAINERS; i++) {
             System.out.println("\n\t\t\t\t" + (i+1) + "° Pilha: ");
-            PilhaContainer.show2(navio.pilhasDeContainers.get(i));
+            navio.pilhasDeContainers.get(i).show2();
         }
+    }
+
+    public static Navio clone(Navio navioOriginal) {
+        Navio clone = new Navio();
+        clone.tempo = navioOriginal.tempo;
+        clone.nome = navioOriginal.nome;
+        clone.qtdContainer = navioOriginal.qtdContainer;
+        clone.pilhasDeContainers = PilhaContainer.clonaPilhaContainer(navioOriginal.pilhasDeContainers);
+        return clone;
     }
 }
