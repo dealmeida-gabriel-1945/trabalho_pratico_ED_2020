@@ -17,7 +17,6 @@ public class Porto implements Cloneable{
     }
     public Porto(Porto porto){
         this.areasAtracamento = porto.areasAtracamento;
-//        this.nome = porto.nome;
     }
 
     public static Porto clona(Porto portoOriginal) {
@@ -32,14 +31,6 @@ public class Porto implements Cloneable{
         for (int i = 0; i < Constantes.MAX_QTD_AREA_ATRACAMENTO; i++) {
             qtd = rand.nextInt(6);
             this.areasAtracamento.get(i).adicionaNavios(qtd, rand);
-        }
-    }
-
-    public void show(){
-        System.out.println("\n\nPorto: " + this.nome);
-        for (int i = 0; i < Constantes.MAX_QTD_AREA_ATRACAMENTO; i++) {
-            System.out.println("\n" + (i+1) + "ª Área de atracamento:");
-            this.areasAtracamento.get(i).show();
         }
     }
 

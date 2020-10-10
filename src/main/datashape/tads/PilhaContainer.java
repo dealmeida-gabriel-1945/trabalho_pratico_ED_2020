@@ -59,16 +59,6 @@ public class PilhaContainer {
         return Objects.isNull(this.topo);
     }
 
-    public void show(){
-        if(this.vazia()){
-            System.out.println("\t\t\t Não há containers");
-        }else{
-            for (int i = 0; !Objects.isNull(this.topo); i++) {
-                System.out.println("\t\t\t" + (i+1) + "° Container: ");
-                this.desempilha().container.show();
-            }
-        }
-    }
 
     public Long quantidade(){
         PilhaContainer pilhaContainer = new PilhaContainer(this);
@@ -80,17 +70,6 @@ public class PilhaContainer {
                 pilhaContainer.desempilha();
             }
             return i;
-        }
-    }
-
-    public void show2(){
-        if(this.vazia()){
-            System.out.println("\t\t\t\t\t Não há containers");
-        }else{
-            for (int i = 0; !Objects.isNull(this.topo); i++) {
-                System.out.println("\t\t\t\t\t" + (i+1) + "° Container: ");
-                this.desempilha().container.show();
-            }
         }
     }
 }

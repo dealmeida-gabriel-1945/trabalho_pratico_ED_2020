@@ -36,7 +36,7 @@ public class AreaAtracamento {
 
     public void adicionaNavios(int qtdNavios, Random rand){
         for (int i = 0; i < qtdNavios; i++) {
-            this.filaNavio.enfileira(new Navio(rand.nextInt(16)));
+            this.filaNavio.enfileira(new Navio(rand.nextInt(16), i));
         }
         System.out.println("");
     }
@@ -65,35 +65,23 @@ public class AreaAtracamento {
         return tempo;
     }
 
-    public void show(){
-        System.out.println("\tFila de navios:");
-        this.filaNavio.show();
-
-        System.out.println("\tTravessas de containers:");
-        for (int i = 0; i < Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS; i++) {
-            System.out.println("\t\t" + (i+1) + "ª Travessa de containers: ");
-            this.travessas.get(i).show();
-        }
-    }
-
     public static void work(AreaAtracamento areaAtracamento){
         if(areaAtracamento.filaNavio.vazia()) return;
-
+        FilaNavio filaAux = new FilaNavio();
         Navio primeiroNavio = areaAtracamento.filaNavio.elementoInicio.navio, toWork = new Navio();
         Long aux = 0L, tempoMais = 0L;
-        while (true){
+        while (!areaAtracamento.filaNavio.vazia()){
             toWork = areaAtracamento.filaNavio.desenfileira().navio;
             if(toWork.trabalhado) break;
             toWork.tempo = areaAtracamento.desenpilhaNavio(toWork);
             toWork.tempo += tempoMais;
             tempoMais = toWork.tempo;
             toWork.trabalhado = true;
-            areaAtracamento.filaNavio.enfileira(toWork);
-            if(Objects.equals(primeiroNavio.nome, toWork.nome)){
-                aux++;
-            }
+            filaAux.enfileira(toWork);
         }
-        System.out.println("");
+        while (!filaAux.vazia()){
+            areaAtracamento.filaNavio.enfileira(filaAux.desenfileira().navio);
+        }
     }
 
     public Long desenpilhaNavio(Navio navio){

@@ -23,14 +23,14 @@ public class Navio {
         }
     }
 
-    public Navio(int qtdContainer){
+    public Navio(int qtdContainer, int numAux){
         this.pilhasDeContainers = new ArrayList<PilhaContainer>();
         /*mesmo sendo um vetor dinamico, ele será tratado como estático*/
         for (int i = 0; i < Constantes.MAX_QTD_PILHA_DE_CONTAINERS; i++) {
             pilhasDeContainers.add(new PilhaContainer());
         }
 
-        this.nome = "Navio " + LocalDateTime.now();
+        this.nome = "Navio " + LocalDateTime.now() + " " + (numAux + 1);
         this.qtdContainer = qtdContainer;
         this.tempo = 0L;
 
@@ -47,13 +47,6 @@ public class Navio {
     }
 
     public static void show(Navio navio){
-        System.out.println("\t\t\tNOME: " + navio.nome);
-        System.out.println("\t\t\tTEMPO ESPERA: " + navio.tempo);
-        System.out.println("\t\t\tQUANTIDADE DE CONTAINERS: " + navio.qtdContainer);
-        for (int i = 0; i < Constantes.MAX_QTD_PILHA_DE_CONTAINERS; i++) {
-            System.out.println("\n\t\t\t\t" + (i+1) + "° Pilha: ");
-            navio.pilhasDeContainers.get(i).show2();
-        }
     }
 
     public static Navio clone(Navio navioOriginal) {

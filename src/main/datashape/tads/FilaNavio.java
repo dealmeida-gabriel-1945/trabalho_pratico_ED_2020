@@ -49,18 +49,4 @@ public class FilaNavio {
     public Boolean vazia(){
         return Objects.isNull(this.elementoInicio);
     }
-
-    public void show(){
-        if(this.vazia()){
-            System.out.println("\t\tNão há navios");
-        }else{
-            for (int i = 0; !Objects.isNull(this.elementoInicio); i++) {
-                System.out.println("\t\t" + (i+1) + "° navio: ");
-                ElementoNavio toShow = this.desenfileira();
-                if(!Objects.isNull(toShow) && !Objects.isNull(toShow.navio)){
-                    Navio.show(toShow.navio);
-                }
-            }
-        }
-    }
 }

@@ -7,7 +7,4 @@ public class Container {
     public Container(){}
     public Container(String id){this.id = id;}
 
-    public void show(){
-        System.out.println("\t\t\t\t\tID: " + this.id);
-    }
 }
