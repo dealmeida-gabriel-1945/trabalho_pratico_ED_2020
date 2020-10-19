@@ -5,7 +5,7 @@ import main.util.Constantes;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Porto {
+public class Porto implements Cloneable{
     public String nome;
     public ArrayList<AreaAtracamento> areasAtracamento = new ArrayList<AreaAtracamento>();
 
@@ -17,7 +17,13 @@ public class Porto {
     }
     public Porto(Porto porto){
         this.areasAtracamento = porto.areasAtracamento;
-        this.nome = porto.nome;
+    }
+
+    public static Porto clona(Porto portoOriginal) {
+        Porto clone = new Porto();
+        clone.areasAtracamento = AreaAtracamento.clona(portoOriginal.areasAtracamento);
+        clone.nome = portoOriginal.nome;
+        return clone;
     }
 
     public void popula(Random rand){
@@ -28,11 +34,9 @@ public class Porto {
         }
     }
 
-    public static void show(Porto porto){
-        System.out.println("\n\nPorto: " + porto.nome);
+    public static void work(Porto porto){
         for (int i = 0; i < Constantes.MAX_QTD_AREA_ATRACAMENTO; i++) {
-            System.out.println("\n" + (i+1) + "ª Área de atracamento:");
-            AreaAtracamento.show(porto.areasAtracamento.get(i));
+            AreaAtracamento.work(porto.areasAtracamento.get(i));
         }
     }
 }
