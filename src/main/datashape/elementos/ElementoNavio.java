@@ -13,6 +13,7 @@ public class ElementoNavio {
     }
     public ElementoNavio(){}
 
+    //deep copy da classe
     public static ElementoNavio clone(ElementoNavio elementoOriginal) {
         if(Objects.isNull(elementoOriginal)) return null;
         ElementoNavio clone = new ElementoNavio();

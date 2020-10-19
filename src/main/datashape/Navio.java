@@ -28,11 +28,14 @@ public class Navio {
         for (int i = 0; i < Constantes.MAX_QTD_PILHA_DE_CONTAINERS; i++) {
             pilhasDeContainers.add(new PilhaContainer());
         }
-
+        //cria um nome de acordo com o horário atual (devido à velocidade de processamento, pode ocorrer a aparição de nomes repetidos)
         this.nome = "Navio " + LocalDateTime.now() + " " + (numAux + 1);
+        //seta quantidade de containers
         this.qtdContainer = qtdContainer;
+        //seta o tempo de espera como zero
         this.tempo = 0L;
 
+        //é distribuido, para as pilhas de continers, a quantidade de containers gerada.
         int i = 0, aux = qtdContainer, negativas = 0;
         while((aux < 16) && (aux > 0)){
             this.pilhasDeContainers.get(i).empilha(new Container(String.valueOf(LocalDateTime.now())));
@@ -45,6 +48,7 @@ public class Navio {
         }
     }
 
+    //deep copy do navio
     public static Navio clone(Navio navioOriginal) {
         Navio clone = new Navio();
         clone.tempo = navioOriginal.tempo;
@@ -54,7 +58,8 @@ public class Navio {
         return clone;
     }
 
-    public String showLog(){
+    //gera o log da saída do anvio
+    public String generateLog(){
         String str1 = "Nome:" + this.nome;
         String str2 = "Tempo de espera:" + this.tempo;
         String str3 = "Quantidade de containers:" + this.qtdContainer;

@@ -19,6 +19,7 @@ public class Porto implements Cloneable{
         this.areasAtracamento = porto.areasAtracamento;
     }
 
+    //deep copy do porto
     public static Porto clona(Porto portoOriginal) {
         Porto clone = new Porto();
         clone.areasAtracamento = AreaAtracamento.clona(portoOriginal.areasAtracamento);
@@ -26,9 +27,11 @@ public class Porto implements Cloneable{
         return clone;
     }
 
+    //popula o porto com dados
     public void popula(Random rand){
         int qtd = 0;
         for (int i = 0; i < Constantes.MAX_QTD_AREA_ATRACAMENTO; i++) {
+            //gera uma quantidade de navios para cara area de atracamento
             qtd = rand.nextInt(6);
             this.areasAtracamento.get(i).adicionaNavios(qtd, rand);
         }
@@ -36,6 +39,7 @@ public class Porto implements Cloneable{
 
     public static void work(Porto porto){
         for (int i = 0; i < Constantes.MAX_QTD_AREA_ATRACAMENTO; i++) {
+            //inicia o cálculo de cada area de atracamento
             AreaAtracamento.work(porto.areasAtracamento.get(i), i);
         }
     }
