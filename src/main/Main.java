@@ -21,9 +21,7 @@ public class Main {
         Scanner ler = new Scanner(System.in);
         Porto porto = new Porto();
         System.out.print("Digite o nome do porto: ");
-//        porto.nome = ler.nextLine();
-        porto.nome = "Nosso Porto";
-//        showAll(porto);
+        porto.nome = ler.nextLine();
 
         porto.popula(rand);
         showAll(porto);
