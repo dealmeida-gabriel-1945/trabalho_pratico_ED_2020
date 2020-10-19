@@ -10,4 +10,5 @@ public final class Constantes {
     public static final Long MAX_QTD_CONTAINERS_POR_PILHA = 4L;
 
     public static final Long TEMPO_RETIRAR_TRAVESSA_PARA_O_PATIO = 2L;
+    public static final Long MAX_TEMPO_DE_ESPERA = 7000L;
 }

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class Navio {
     public String nome;
     public Long tempo;
-    public boolean trabalhado = false;
     public int qtdContainer;
 
     public ArrayList<PilhaContainer> pilhasDeContainers = new ArrayList<PilhaContainer>();
@@ -46,9 +45,6 @@ public class Navio {
         }
     }
 
-    public static void show(Navio navio){
-    }
-
     public static Navio clone(Navio navioOriginal) {
         Navio clone = new Navio();
         clone.tempo = navioOriginal.tempo;
@@ -56,5 +52,13 @@ public class Navio {
         clone.qtdContainer = navioOriginal.qtdContainer;
         clone.pilhasDeContainers = PilhaContainer.clonaPilhaContainer(navioOriginal.pilhasDeContainers);
         return clone;
+    }
+
+    public String showLog(){
+        String str1 = "Nome:" + this.nome;
+        String str2 = "Tempo de espera:" + this.tempo;
+        String str3 = "Quantidade de containers:" + this.qtdContainer;
+        String str4 = "--------------------------------------------------------------\n";
+        return String.join("\n", str1, str2, str3, str4);
     }
 }

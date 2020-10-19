@@ -36,7 +36,7 @@ public class Porto implements Cloneable{
 
     public static void work(Porto porto){
         for (int i = 0; i < Constantes.MAX_QTD_AREA_ATRACAMENTO; i++) {
-            AreaAtracamento.work(porto.areasAtracamento.get(i));
+            AreaAtracamento.work(porto.areasAtracamento.get(i), i);
         }
     }
 }

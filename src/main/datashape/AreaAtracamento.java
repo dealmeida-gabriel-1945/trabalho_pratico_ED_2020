@@ -1,5 +1,6 @@
 package main.datashape;
 
+import main.Main;
 import main.datashape.tads.FilaNavio;
 import main.datashape.tads.PilhaContainer;
 import main.util.Constantes;
@@ -56,32 +57,42 @@ public class AreaAtracamento {
         for (int i = 0; i < Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS; i++) {
             if(this.travessasLotadas()){
                 tempo += Constantes.TEMPO_RETIRAR_TRAVESSA_PARA_O_PATIO * Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS;
-            }if(this.travessas.get(i).quantidade() < Constantes.MAX_QTD_DE_CONTAINERS_POR_TRAVESSA){
+                this.chegaNovosNavios(Constantes.TEMPO_RETIRAR_TRAVESSA_PARA_O_PATIO * Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS);
+            }
+            if(this.travessas.get(i).quantidade() < Constantes.MAX_QTD_DE_CONTAINERS_POR_TRAVESSA){
                 this.travessas.get(i).empilha(container);
                 tempo+=1L;
+                this.chegaNovosNavios(1L);
                 break;
             }
         }
         return tempo;
     }
 
-    public static void work(AreaAtracamento areaAtracamento){
+    private void chegaNovosNavios(Long tics) {
+        for (Long i = tics; i > 0 ; i--) {
+            this.adicionaNavios(new Random().nextInt(4), new Random());
+        }
+    }
+
+    public static void work(AreaAtracamento areaAtracamento, int posicaoArea){
         if(areaAtracamento.filaNavio.vazia()) return;
-        FilaNavio filaAux = new FilaNavio();
-        Navio primeiroNavio = areaAtracamento.filaNavio.elementoInicio.navio, toWork = new Navio();
-        Long aux = 0L, tempoMais = 0L;
+        Navio toWork = new Navio();
+        String workLog = "";
+        Long tempoMais = 0L;
         while (!areaAtracamento.filaNavio.vazia()){
             toWork = areaAtracamento.filaNavio.desenfileira().navio;
-            if(toWork.trabalhado) break;
             toWork.tempo = areaAtracamento.desenpilhaNavio(toWork);
             toWork.tempo += tempoMais;
             tempoMais = toWork.tempo;
-            toWork.trabalhado = true;
-            filaAux.enfileira(toWork);
+            workLog += String.join("\n", showSaidaNavio(toWork, posicaoArea));
+            if(tempoMais > Main.MAX_TEMPO_DE_ESPERA) break;
         }
-        while (!filaAux.vazia()){
-            areaAtracamento.filaNavio.enfileira(filaAux.desenfileira().navio);
-        }
+        Main.workLogs.add(workLog);
+    }
+
+    private static String showSaidaNavio(Navio toWork, int posicaoArea) {
+        return String.join("\n", (posicaoArea + 1) + "ª Área de atracamento:", toWork.showLog());
     }
 
     public Long desenpilhaNavio(Navio navio){

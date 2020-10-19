@@ -17,21 +17,13 @@ public class FilaNavio {
 
     public int enfileira(Navio dados){
         ElementoNavio elementoNavio = new ElementoNavio(dados);
-        if(this.elementoFim == null){
+        if(Objects.isNull(this.elementoFim)){
             this.elementoInicio = elementoNavio;
         }else{
-            this.moveParaUltimo(this.elementoInicio, elementoNavio);
+            this.elementoFim.proximo = elementoNavio;
         }
         this.elementoFim = elementoNavio;
         return 1;
-    }
-
-    private void moveParaUltimo(ElementoNavio elementoInicio, ElementoNavio elementoNovo) {
-        if(Objects.isNull(elementoInicio.proximo)){
-            elementoInicio.proximo = elementoNovo;
-        }else{
-            moveParaUltimo(elementoInicio.proximo, elementoNovo);
-        }
     }
 
     public ElementoNavio desenfileira(){

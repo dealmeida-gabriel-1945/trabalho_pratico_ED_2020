@@ -9,25 +9,31 @@ import main.datashape.tads.FilaNavio;
 import main.datashape.tads.PilhaContainer;
 import main.util.Constantes;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
-
+    public static Porto porto = new Porto();
+    public static Random rand = new Random();
+    public static Long MAX_TEMPO_DE_ESPERA = 7000L;
+    public static ArrayList<String> workLogs = new ArrayList<>();
 
     public static void main(String[] args) {
-        Random rand = new Random();
         Scanner ler = new Scanner(System.in);
-        Porto porto = new Porto();
         System.out.print("Digite o nome do porto: ");
-//        porto.nome = ler.nextLine();
-        porto.nome = "Nosso Porto";
-//        showAll(porto);
+        porto.nome = ler.nextLine();
+        System.out.print("Digite o máximo de tempo de espera (dica: 7000): ");
+        MAX_TEMPO_DE_ESPERA = ler.nextLong();
 
         porto.popula(rand);
         showAll(porto);
-        showAll(calculaAll(porto));
+        calculaAll(porto);
+        for (int i = 0; i < workLogs.size(); i++) {
+            System.out.println(workLogs.get(i));
+            System.out.println("\n\n");
+        }
     }
 
     public static Porto calculaAll(Porto portoOriginal){
