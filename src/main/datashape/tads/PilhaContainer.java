@@ -70,17 +70,25 @@ public class PilhaContainer {
 
 
     public Long quantidade(){
-        //clona a si próprio
-        PilhaContainer pilhaContainer = new PilhaContainer(this);
+
+        PilhaContainer pilha = new PilhaContainer();
+
         //se ela for vazia, retorna zero
-        if(pilhaContainer.vazia()){
+        if(this.vazia()){
             return 0L;
-        }else{
-            //realiza a contagem de elementos ao desempilhar cada elemento da pilha
+        }else{//pilha vazia
             Long i = 0L;
-            for (; !pilhaContainer.vazia(); i++){
-                pilhaContainer.desempilha();
+
+            //realiza a contagem de elementos ao desempilhar cada elemento da pilha
+            for (; !this.vazia(); i++){//tira
+                pilha.empilha(this.desempilha().container);
             }
+
+            //recoloca os containers na pilha original
+            for (; !pilha.vazia();){
+                this.empilha(pilha.desempilha().container);
+            }
+
             return i;
         }
     }

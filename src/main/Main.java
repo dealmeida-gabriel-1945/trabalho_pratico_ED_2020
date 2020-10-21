@@ -37,18 +37,18 @@ public class Main {
         //é mostrado cada elemento contido no porto
         showAll(porto);
         //dá-se início à contagem do tempo de espera de cada navio
-        porto = calculaAll(porto);
+        calculaAll(porto);
+    }
+
+    public static void calculaAll(Porto portoOriginal){
+        Porto porto = Porto.clona(portoOriginal);
+        System.out.println("\n\n\n\n");
+        Porto.work(porto);
+
         //mostra o worklogs (reports de saída) de cada navio
         for (int i = 0; i < Constantes.MAX_QTD_AREA_ATRACAMENTO; i++) {
             porto.areasAtracamento.get(i).workLog.show(porto.areasAtracamento.get(i), i);
         }
-    }
-
-    public static Porto calculaAll(Porto portoOriginal){
-        Porto porto = Porto.clona(portoOriginal);
-        System.out.println("\n\n\n\n");
-        Porto.work(porto);
-        return porto;
     }
 
     public static void showAll(Porto portoOriginal){
