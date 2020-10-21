@@ -30,6 +30,6 @@ public class WorkLog {
         }
         System.out.println("------> Total de Containers Presentes nas Travessas: " + cont);
         System.out.println(idsContainers);
-        //System.out.println("Logs dos navios:\n" + textContent);
+        System.out.println("Logs dos navios:\n" + textContent);
     }
 }
