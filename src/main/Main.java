@@ -17,7 +17,6 @@ import java.util.Scanner;
 public class Main {
     /*elementos estáticos que poderão ser acessados em qualquer ponto do código*/
     public static Long MAX_TEMPO_DE_ESPERA = 7000L;
-    public static ArrayList<String> workLogs = new ArrayList<>();
 
     public static void main(String[] args) {
         //Porto em questão
@@ -38,11 +37,10 @@ public class Main {
         //é mostrado cada elemento contido no porto
         showAll(porto);
         //dá-se início à contagem do tempo de espera de cada navio
-        calculaAll(porto);
+        porto = calculaAll(porto);
         //mostra o worklogs (reports de saída) de cada navio
-        for (int i = 0; i < workLogs.size(); i++) {
-            System.out.println(workLogs.get(i));
-            System.out.println("\n\n");
+        for (int i = 0; i < Constantes.MAX_QTD_AREA_ATRACAMENTO; i++) {
+            porto.areasAtracamento.get(i).workLog.show(porto.areasAtracamento.get(i), i);
         }
     }
 

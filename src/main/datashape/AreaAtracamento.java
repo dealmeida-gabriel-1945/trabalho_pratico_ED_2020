@@ -11,6 +11,7 @@ import java.util.Random;
 
 public class AreaAtracamento {
     public FilaNavio filaNavio = new FilaNavio();
+    public WorkLog workLog = new WorkLog();
     public ArrayList<PilhaContainer> travessas = new ArrayList<PilhaContainer>();
 
     public AreaAtracamento(){
@@ -57,10 +58,13 @@ public class AreaAtracamento {
     //adiciona container ás travessas retornando o tempo gasto
     public Long adicionaContainer(Container container){
         Long tempo = 0L;
+        this.workLog.totalContainers++;
         for (int i = 0; i < Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS; i++) {
             //se todas as travessas estiverem lotadas, mande o conteúdo para o pátio
             if(this.travessasLotadas()){
                 tempo += Constantes.TEMPO_RETIRAR_TRAVESSA_PARA_O_PATIO * Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS;
+                this.workLog.viagensDoCarro += Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS;
+                this.esvaziaTravessas();
                 //chega uma nova leva de vaios ou nao
                 this.chegaNovosNavios(Constantes.TEMPO_RETIRAR_TRAVESSA_PARA_O_PATIO * Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS);
             }
@@ -73,6 +77,12 @@ public class AreaAtracamento {
             }
         }
         return tempo;
+    }
+
+    private void esvaziaTravessas() {
+        for (int i = 0; i < Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS; i++) {
+            this.travessas.set(i, new PilhaContainer());
+        }
     }
 
     //adiciona de 0 a 3 navios a cada tic
@@ -88,7 +98,7 @@ public class AreaAtracamento {
         if(areaAtracamento.filaNavio.vazia()) return;
         Navio toWork = new Navio();
         String workLog = "";
-        Long tempoMais = 0L;
+        Long tempoMais = 0L, contadorNavios = 0L, somaTempoNavios = 0L;
         //enquanto a fila não for vazia, é contado o tempo de espera de cada um
         while (!areaAtracamento.filaNavio.vazia()){
             //desenfilera o navio para tirar seus containers
@@ -101,11 +111,15 @@ public class AreaAtracamento {
             tempoMais = toWork.tempo;
             //adiciona um workLog
             workLog += String.join("\n", generateSaidaNavio(toWork, posicaoArea));
+            contadorNavios++;
+            somaTempoNavios += toWork.tempo;
             //se o tempo de espera sobrepor o máximo, quebra-se o laço
             if(tempoMais > Main.MAX_TEMPO_DE_ESPERA) break;
         }
         //adiciona um workLog na variável do main
-        Main.workLogs.add(workLog);
+        areaAtracamento.workLog.textContent = workLog;
+        areaAtracamento.workLog.mediaDeEspera = (contadorNavios != 0) ? somaTempoNavios/contadorNavios : 0L;
+        areaAtracamento.workLog.mediaDeEspera = somaTempoNavios/contadorNavios;
     }
 
     //gerar uma saída de navío para o workLog
@@ -117,10 +131,8 @@ public class AreaAtracamento {
     public Long desenpilhaNavio(Navio navio){
         Long tempo = 0L;
         for (int i = 0; i < Constantes.MAX_QTD_PILHA_DE_CONTAINERS; i++) {
-            if(!navio.pilhasDeContainers.get(i).vazia()){
-                while (!navio.pilhasDeContainers.get(i).vazia()){
-                    tempo += this.adicionaContainer(navio.pilhasDeContainers.get(i).desempilha().container);
-                }
+            while (!navio.pilhasDeContainers.get(i).vazia()){
+                tempo += this.adicionaContainer(navio.pilhasDeContainers.get(i).desempilha().container);
             }
         }
         return tempo;
