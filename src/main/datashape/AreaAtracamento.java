@@ -105,10 +105,8 @@ public class AreaAtracamento {
             toWork = areaAtracamento.filaNavio.desenfileira().navio;
             //desempilha os containers do navio e seta o tempo de espera
             toWork.tempo = areaAtracamento.desenpilhaNavio(toWork);
-            //o tempo de espera de um navio = tempo de seu trabalho + o tempo de espera do navio da frente
-            toWork.tempo += tempoMais;
             //seta o "tempo a mais" como sendo o tempo de espera total do atual
-            tempoMais = toWork.tempo;
+            tempoMais += toWork.tempo;
             //adiciona um workLog
             workLog += String.join("\n", generateSaidaNavio(toWork, posicaoArea));
             contadorNavios++;

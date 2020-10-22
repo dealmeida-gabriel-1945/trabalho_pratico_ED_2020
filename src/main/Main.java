@@ -29,7 +29,7 @@ public class Main {
         //recoplhe informações necessárias
         System.out.print("Digite o nome do porto: ");
         porto.nome = ler.nextLine();
-        System.out.print("Digite o máximo de tempo de espera (dica: 7000): ");
+        System.out.print("Digite o máximo de tempo de espera (dica: 1000): ");
         MAX_TEMPO_DE_ESPERA = ler.nextLong();
 
         //o porto é populado com dados aleatórios
