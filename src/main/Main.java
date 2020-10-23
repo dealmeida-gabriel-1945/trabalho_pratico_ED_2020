@@ -1,10 +1,13 @@
 package main;
 
 import main.datashape.Porto;
+import main.util.Constantes;
 
 public class Main {
 
     public static void main(String[] args) {
+        Constantes.TEMPO_MAXIMO = 100L;
+
         //inicia o porto
         Porto porto = new Porto();
 

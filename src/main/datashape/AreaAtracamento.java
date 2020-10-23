@@ -11,8 +11,8 @@ import java.util.Random;
 public class AreaAtracamento {
     public Long tempoDecorrido;
     public Long quantidadeNaviosInical;
-    public Long quantidadeNaviosTotal;//todo atualizar tal quantidad
-    public Long quantidadeContainersTotal;//todo atualizar tal quantidad
+    public Long quantidadeNaviosTotal;
+    public Long quantidadeContainersTotal;
     public Carro carro;
     public FilaNavio filaNavio;
     public ArrayList<PilhaContainer> travessas;
@@ -70,6 +70,7 @@ public class AreaAtracamento {
 
     //trabalha a area de atracamento
     public void work() {
+        this.quantidadeNaviosTotal+= this.quantidadeNaviosInical;
         //enquanto a fila nao for vazia e o tempo máximo nao for batido
         //a area ser átrabalhada
         while(!this.filaNavio.vazia() && (tempoDecorrido <= Constantes.TEMPO_MAXIMO)){
@@ -125,7 +126,8 @@ public class AreaAtracamento {
                 this.filaWorklogContainers.enfileira(wl);
                 //é adicionado uma unidade de tempo em todos da fila
                 this.adicionarTempoEmTodaFila(Constantes.TEMPO_DESEMPILHAR_CONTAINER_GRUA);
-                //todo: adicionar ou nao navios
+                //adiciona, ou não, novos navios à área de atracamento
+                this.adicionaNovosNavios();
                 //o navio recebe uma unidade de tempo
                 navio.tempo+=1L;
                 //o tempo decorrido da área de atracamento
@@ -142,6 +144,18 @@ public class AreaAtracamento {
             this.carro.viagens++;
             //adiciona o dempo decorrido do carro
             this.carro.tempoDecorrido += Constantes.TEMPO_MEDIO_CARRO;
+        }
+    }
+
+    private void adicionaNovosNavios() {
+        Random rand = new Random();
+        int qtdNovosNavios = rand.nextInt(Constantes.MAX_NOVOS_NAVIOS + 1);
+        this.quantidadeNaviosTotal+= qtdNovosNavios;
+        for (int i = 0; i < qtdNovosNavios; i++) {
+            Navio toAdd = new Navio();
+            toAdd.prepare();
+            toAdd.popula();
+            this.filaNavio.enfileira(toAdd);
         }
     }
 
@@ -176,14 +190,14 @@ public class AreaAtracamento {
 
         this.showTravessas();
 
-        System.out.println("Worklogs de todos os navios:\n");
+        System.out.println("~~~~~~~~~~~~~~~~Worklogs de todos os navios:~~~~~~~~~~~~~~~~\n");
         if(this.filaWorklogNavios.vazia()){
             System.out.println("-----SEM WORKLOGS DE NAVIOS-----");
         }else{
             this.filaWorklogNavios.show();
         }
 
-        System.out.println("Worklogs de todos os containers:\n");
+        System.out.println("~~~~~~~~~~~~~~~~Worklogs de todos os containers:~~~~~~~~~~~~~~~~\n");
         if(this.filaWorklogContainers.vazia()){
             System.out.println("-----SEM WORKLOGS DE CONTAINERS-----");
         }else{
