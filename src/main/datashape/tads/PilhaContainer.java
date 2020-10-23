@@ -73,4 +73,26 @@ public class PilhaContainer {
         //seta o topo como nulo
         this.topo = null;
     }
+
+    public void show() {
+        //se a pilha for vazia, mostra mensagem especial
+        if(this.vazia()){
+            System.out.println("\t------SEM CONTAINERS------");
+        }
+        //inicia a pilha auxiliar e a prepara
+        PilhaContainer aux = new PilhaContainer();
+        aux.prepare();
+
+        //desempilha toda a pilha original e conta quantos elementos
+        while (!this.vazia()){
+            Container container = this.desempilha().container;
+            System.out.println("\tSerial: " + container.serial);
+            aux.empilha(container);
+        }
+
+        //retorna os itens para a original
+        while (!aux.vazia()){
+            this.empilha(aux.desempilha().container);
+        }
+    }
 }

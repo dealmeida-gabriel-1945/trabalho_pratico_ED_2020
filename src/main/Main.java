@@ -16,5 +16,8 @@ public class Main {
 
         //trabalha porto
         porto.work();
+
+        //mostra todos os worklogs
+        porto.showDados();
     }
 }

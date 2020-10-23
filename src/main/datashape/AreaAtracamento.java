@@ -1,6 +1,7 @@
 package main.datashape;
 
 import main.datashape.tads.FilaNavio;
+import main.datashape.tads.FilaWorklog;
 import main.datashape.tads.PilhaContainer;
 import main.util.Constantes;
 
@@ -9,12 +10,20 @@ import java.util.Random;
 
 public class AreaAtracamento {
     public Long tempoDecorrido;
+    public Long quantidadeNaviosInical;
+    public Long quantidadeNaviosTotal;//todo atualizar tal quantidad
+    public Long quantidadeContainersTotal;//todo atualizar tal quantidad
     public Carro carro;
     public FilaNavio filaNavio;
     public ArrayList<PilhaContainer> travessas;
+    public FilaWorklog filaWorklogNavios;
+    public FilaWorklog filaWorklogContainers;
 
     //prepara a area de atracamento
     public void prepare() {
+        this.quantidadeNaviosTotal = 0L;
+        this.quantidadeNaviosInical = 0L;
+        this.quantidadeContainersTotal = 0L;
         this.tempoDecorrido = 0L;
         //inicia a fila de navios
         this.filaNavio = new FilaNavio();
@@ -31,14 +40,24 @@ public class AreaAtracamento {
             this.travessas.add(pilha);
         }
 
+        //prepara o carro
         this.carro = new Carro();
         this.carro.prepare();
+
+        //prepara a fila de worklog de navios
+        this.filaWorklogNavios = new FilaWorklog();
+        this.filaWorklogNavios.prepare();
+
+        //prepara a fila de worklog de containers
+        this.filaWorklogContainers = new FilaWorklog();
+        this.filaWorklogContainers.prepare();
     }
 
     //popula a area de atracamento
     public void popula() {
         Random rand = new Random();
         int qtdNavios = rand.nextInt(Constantes.MAX_NAVIOS_INICIAIS);
+        this.quantidadeNaviosInical += qtdNavios;
         for (int i = 0; i < qtdNavios ; i++) {
             Navio newNavio = new Navio();
             //prepara o navio
@@ -58,7 +77,11 @@ public class AreaAtracamento {
             Navio toWork = this.filaNavio.desinfileira().navio;
             //trabalha o navio
             this.trabalhaNavioPt1(toWork);
-            //todo: toString do navio
+            //cria um worklog do navio trabalhado
+            Worklog wl = new Worklog();
+            wl.prepare(toWork);
+            //guarda o worklog do na fila
+            this.filaWorklogNavios.enfileira(wl);
         }
     }
 
@@ -91,9 +114,18 @@ public class AreaAtracamento {
             //se a pilha não estiver vazia, retida dela
             if (!navio.pilhasDeContainers.get(i).vazia()){
                 //a travessa recebe o novo container
-                travessa.empilha(navio.pilhasDeContainers.get(i).desempilha().container);
+                Container container = navio.pilhasDeContainers.get(i).desempilha().container;
+                travessa.empilha(container);
+                //cria o worklog do container
+                Worklog wl = new Worklog();
+                wl.prepare(container);
+                //adiciona uma unidade no contador de containers total
+                this.quantidadeContainersTotal+=1L;
+                //guarda o worklog do contaienr na fila de worklogs de containers
+                this.filaWorklogContainers.enfileira(wl);
                 //é adicionado uma unidade de tempo em todos da fila
                 this.adicionarTempoEmTodaFila(Constantes.TEMPO_DESEMPILHAR_CONTAINER_GRUA);
+                //todo: adicionar ou nao navios
                 //o navio recebe uma unidade de tempo
                 navio.tempo+=1L;
                 //o tempo decorrido da área de atracamento
@@ -130,6 +162,39 @@ public class AreaAtracamento {
         //agora é passado para a original os navios
         while(!aux.vazia()){
             this.filaNavio.enfileira(aux.desinfileira().navio);
+        }
+    }
+
+    public void show(int index) {
+        System.out.println("==============================================");
+        System.out.println("Área de atracamento " + (index) + ": ");
+        System.out.println("\tQuantidade de navios inicial: " + this.quantidadeNaviosInical + " navios;");
+        System.out.println("\tQuantidade de navios total: " + this.quantidadeNaviosTotal + " navios;");
+        System.out.println("\tQuantidade de containers total: " + this.quantidadeContainersTotal + " containers;");
+        System.out.println("\tCarro:");
+        this.carro.show();
+
+        this.showTravessas();
+
+        System.out.println("Worklogs de todos os navios:\n");
+        if(this.filaWorklogNavios.vazia()){
+            System.out.println("-----SEM WORKLOGS DE NAVIOS-----");
+        }else{
+            this.filaWorklogNavios.show();
+        }
+
+        System.out.println("Worklogs de todos os containers:\n");
+        if(this.filaWorklogContainers.vazia()){
+            System.out.println("-----SEM WORKLOGS DE CONTAINERS-----");
+        }else{
+            this.filaWorklogContainers.show();
+        }
+    }
+
+    private void showTravessas() {
+        for (int i = 0; i < Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS; i++) {
+            System.out.println("Travessa " + (i+1) + ": ");
+            this.travessas.get(i).show();
         }
     }
 }

@@ -56,4 +56,25 @@ public class FilaNavio {
         }
         return elNavio;
     }
+
+    //retorna a quantidade de elementos na fila
+    public Long quantidade() {
+        //se a fila estiver vazia, retorna zero
+        if(this.vazia()) return 0L;
+        //contador de navios
+        Long qtd = 0L;
+        //fila auxiliar
+        FilaNavio aux = new FilaNavio();
+        aux.prepare();
+        //passa todos do original para o auxiliar
+        while (!this.vazia()){
+            aux.enfileira(this.desinfileira().navio);
+            qtd+=1L;
+        }
+        //passa todos do auxiliar para o original
+        while (!aux.vazia()){
+            this.enfileira(aux.desinfileira().navio);
+        }
+        return qtd;
+    }
 }

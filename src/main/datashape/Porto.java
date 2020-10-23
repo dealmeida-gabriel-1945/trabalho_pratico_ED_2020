@@ -38,4 +38,12 @@ public class Porto implements Cloneable{
             areasAtracamento.get(i).work();
         }
     }
+
+    //mostra os dados de todo o porto
+    public void showDados() {
+        //for para trabalhar as areas de atracamento
+        for (int i = 0; i < Constantes.MAX_QTD_AREA_ATRACAMENTO; i++) {
+            areasAtracamento.get(i).show(i+1);
+        }
+    }
 }
