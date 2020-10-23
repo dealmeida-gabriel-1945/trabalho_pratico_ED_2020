@@ -1,75 +1,76 @@
 package main.datashape.tads;
 
-import main.datashape.AreaAtracamento;
 import main.datashape.Container;
 import main.datashape.elementos.ElementoContainer;
-import main.util.Constantes;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class PilhaContainer {
-    public ElementoContainer topo = null;
+    public ElementoContainer topo;
 
-    public PilhaContainer(){}
-
-    public PilhaContainer(PilhaContainer pilhaContainer){
-        this.topo = pilhaContainer.topo;
+    public void prepare() {//prepara a pilha de containers
+        this.topo = null;
     }
 
-    public static ArrayList<PilhaContainer> clonaTravessas(ArrayList<PilhaContainer> travessasOriginais) {
-        ArrayList<PilhaContainer> clones = new ArrayList<>();
-        for (int i = 0; i < Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS; i++) {
-            clones.add(PilhaContainer.clona(travessasOriginais.get(i)));
-        }
-        return clones;
-    }
-
-    public static ArrayList<PilhaContainer> clonaPilhaContainer(ArrayList<PilhaContainer> travessasOriginais) {
-        ArrayList<PilhaContainer> clones = new ArrayList<>();
-        for (int i = 0; i < Constantes.MAX_QTD_PILHA_DE_CONTAINERS; i++) {
-            clones.add(PilhaContainer.clona(travessasOriginais.get(i)));
-        }
-        return clones;
-    }
-
-    public static PilhaContainer clona(PilhaContainer travessaOriginal) {
-        PilhaContainer clone = new PilhaContainer();
-        clone.topo = travessaOriginal.topo;
-        return clone;
-    }
-
-    public int empilha(Container dados){
-        ElementoContainer elementoContainer = new ElementoContainer(dados);
-        elementoContainer.proximo = this.topo;
-        this.topo = elementoContainer;
-        return 1;
-    }
-
-    public ElementoContainer desempilha(){
-        if(this.topo == null){
-            return null;
-        }
-        ElementoContainer elm = this.topo;
-        this.topo = elm.proximo;
-        return elm;
-    }
-
-    public Boolean vazia(){
+    public boolean vazia(){//verifica se a pílha está vazia
+        //se o topo for nulo, a pilha está vazia
         return Objects.isNull(this.topo);
     }
 
+    public boolean empilha(Container container){//empilha um elemento container à pilha
+        //se os dados forem nulos, não se pode inserir
+        if (Objects.isNull(container)) return false;
 
-    public Long quantidade(){
-        PilhaContainer pilhaContainer = new PilhaContainer(this);
-        if(pilhaContainer.vazia()){
-            return 0L;
-        }else{
-            Long i = 0L;
-            for (; !pilhaContainer.vazia(); i++){
-                pilhaContainer.desempilha();
-            }
-            return i;
+        //cria um nó auxiliar
+        ElementoContainer elContainer = new ElementoContainer();
+        //seta o novo container no elemento
+        elContainer.container = container;
+        //coloca o topo atual como o proximo
+        elContainer.proximo = this.topo;
+        //agora, o topo é o novo elemento
+        this.topo = elContainer;
+        return true;
+    }
+
+    public ElementoContainer desempilha(){
+        //se a pilha for vazia, nao se pode desempilhar
+        if(this.vazia()) return null;
+
+        //Elemento auxiliar recebe o topo
+        ElementoContainer dados = this.topo;
+        //o topo é o próximo do antigo topo
+        this.topo = dados.proximo;
+        //retorna o elemento desempilhado
+        return dados;
+    }
+
+    //retorna a quantidade de
+    public int quantidade(){
+        //se a pilha for vazia, retorna zero
+        if(this.vazia()) return 0;
+        //variavel para contar
+        int qtd = 0;
+        //inicia a pilha auxiliar e a prepara
+        PilhaContainer aux = new PilhaContainer();
+        aux.prepare();
+
+        //desempilha toda a pilha original e conta quantos elementos
+        while (!this.vazia()){
+            aux.empilha(this.desempilha().container);
+            qtd++;
         }
+
+        //retorna os itens para a original
+        while (!aux.vazia()){
+            this.empilha(aux.desempilha().container);
+        }
+
+        return qtd;
+    }
+
+    //esvazia a pilha
+    public void esvazia() {
+        //seta o topo como nulo
+        this.topo = null;
     }
 }

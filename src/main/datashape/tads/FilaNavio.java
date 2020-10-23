@@ -6,47 +6,54 @@ import main.datashape.elementos.ElementoNavio;
 import java.util.Objects;
 
 public class FilaNavio {
-    public ElementoNavio elementoInicio = null, elementoFim = null;
+    public ElementoNavio elementoInicio;
+    public ElementoNavio elementoFim;
 
-    public static FilaNavio clona(FilaNavio filaOriginal) {
-        FilaNavio clone = new FilaNavio();
-        clone.elementoInicio = ElementoNavio.clone(filaOriginal.elementoInicio);
-        clone.elementoFim = ElementoNavio.clone(filaOriginal.elementoFim);
-        return clone;
+    //prepara a fila
+    public void prepare() {
+        this.elementoInicio = null;
+        this.elementoFim = null;
     }
 
-    public int enfileira(Navio dados){
-        ElementoNavio elementoNavio = new ElementoNavio(dados);
-        if(this.elementoFim == null){
-            this.elementoInicio = elementoNavio;
-        }else{
-            this.moveParaUltimo(this.elementoInicio, elementoNavio);
-        }
-        this.elementoFim = elementoNavio;
-        return 1;
+    //verifica se a fila está vazia
+    public boolean vazia(){
+        //se o início estiver vazio, a fila está vazia
+        return Objects.isNull(this.elementoInicio);
     }
 
-    private void moveParaUltimo(ElementoNavio elementoInicio, ElementoNavio elementoNovo) {
-        if(Objects.isNull(elementoInicio.proximo)){
-            elementoInicio.proximo = elementoNovo;
-        }else{
-            moveParaUltimo(elementoInicio.proximo, elementoNovo);
+    public boolean enfileira(Navio navio){
+        //se o navio for nulo, nao o enfilera
+        if(Objects.isNull(navio)) return false;
+
+        //elemento auxiliar
+        ElementoNavio elNavio = new ElementoNavio();
+        //seta o novo navio no elemento auxiliar
+        elNavio.navio = navio;
+        //seta nulo o proximo elemento no elemento auxiliar
+        elNavio.proximo = null;
+
+        if(this.vazia()){//se a fila for vazia, ensira no inicio
+            this.elementoInicio = elNavio;
+        }else{//se não, insira no final
+            this.elementoFim.proximo = elNavio;
         }
+        this.elementoFim = elNavio;
+        return true;
     }
 
-    public ElementoNavio desenfileira(){
-        if(this.elementoInicio == null){
-            return null;
-        }
-        ElementoNavio elementoNavio = this.elementoInicio;
+    //desenfilera 1 navio da fila
+    public ElementoNavio desinfileira(){
+        //se a fila estiver vazia, não se pode desenfileirar
+        if(this.vazia()) return  null;
+
+        //elemento auxiliar recebe o inicio
+        ElementoNavio elNavio  = this.elementoInicio;
+        //o inicio recebe o segundo elemento
         this.elementoInicio = this.elementoInicio.proximo;
-        if(this.elementoInicio == null){
+        if(this.vazia()){//se ela for vazia, anula o final
+            //fim passa a ser null
             this.elementoFim = null;
         }
-        return elementoNavio;
-    }
-
-    public Boolean vazia(){
-        return Objects.isNull(this.elementoInicio);
+        return elNavio;
     }
 }

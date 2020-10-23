@@ -5,56 +5,46 @@ import main.util.Constantes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Navio {
-    public String nome;
+    public String id;
     public Long tempo;
-    public boolean trabalhado = false;
     public int qtdContainer;
 
-    public ArrayList<PilhaContainer> pilhasDeContainers = new ArrayList<PilhaContainer>();
+    public ArrayList<PilhaContainer> pilhasDeContainers = new ArrayList<>();
 
-
-    public Navio(){
-        this.pilhasDeContainers = new ArrayList<PilhaContainer>();
-        /*mesmo sendo um vetor dinamico, ele será tratado como estático*/
-        for (int i = 0; i < Constantes.MAX_QTD_PILHA_DE_CONTAINERS; i++) {
-            pilhasDeContainers.add(new PilhaContainer());
-        }
-    }
-
-    public Navio(int qtdContainer, int numAux){
-        this.pilhasDeContainers = new ArrayList<PilhaContainer>();
-        /*mesmo sendo um vetor dinamico, ele será tratado como estático*/
-        for (int i = 0; i < Constantes.MAX_QTD_PILHA_DE_CONTAINERS; i++) {
-            pilhasDeContainers.add(new PilhaContainer());
-        }
-
-        this.nome = "Navio " + LocalDateTime.now() + " " + (numAux + 1);
-        this.qtdContainer = qtdContainer;
+    //prepara o navio
+    public void prepare(){
+        Random rand = new Random();
+        this.id = LocalDateTime.now().toString() + Constantes.NOME_PORTO + rand.nextInt();
         this.tempo = 0L;
-
-        int i = 0, aux = qtdContainer, negativas = 0;
-        while((aux < 16) && (aux > 0)){
-            this.pilhasDeContainers.get(i).empilha(new Container(String.valueOf(LocalDateTime.now())));
-            aux--;
-            negativas++;
-            if(negativas == Constantes.MAX_QTD_CONTAINERS_POR_PILHA){
-                i++;
-                negativas = 0;
-            }
+        this.pilhasDeContainers = new ArrayList<>();
+        for (int i = 0; i < Constantes.MAX_QTD_PILHA_DE_CONTAINERS; i++) {
+            PilhaContainer pilha = new PilhaContainer();
+            pilha.prepare();
+            this.pilhasDeContainers.add(pilha);
         }
     }
 
-    public static void show(Navio navio){
-    }
+    public void popula() {//popula o navio
+        Random rand = new Random();
+        //gera de 4 a 16 containers no vaio
+        this.qtdContainer = rand.nextInt(12) + 4;
+        //controlador de qual pilha será feita a inserção
+        int pilha = 0;
+        for (int i = 0; i < qtdContainer; i++) {
+            //instancia o novo container
+            Container newContainer = new Container();
+            //prepara o container
+            newContainer.prepare();
 
-    public static Navio clone(Navio navioOriginal) {
-        Navio clone = new Navio();
-        clone.tempo = navioOriginal.tempo;
-        clone.nome = navioOriginal.nome;
-        clone.qtdContainer = navioOriginal.qtdContainer;
-        clone.pilhasDeContainers = PilhaContainer.clonaPilhaContainer(navioOriginal.pilhasDeContainers);
-        return clone;
+            //empilha o novo container
+            this.pilhasDeContainers.get(pilha).empilha(newContainer);
+
+            //se o controlador da pilha estiver no ultimo index, retorna-o para 0
+            //caso não, adiciona 1 ao valor
+            pilha += (pilha == Constantes.MAX_QTD_PILHA_DE_CONTAINERS-1) ? (-pilha) : 1;
+        }
     }
 }

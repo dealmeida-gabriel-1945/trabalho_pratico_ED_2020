@@ -5,94 +5,131 @@ import main.datashape.tads.PilhaContainer;
 import main.util.Constantes;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Random;
 
 public class AreaAtracamento {
-    public FilaNavio filaNavio = new FilaNavio();
-    public ArrayList<PilhaContainer> travessas = new ArrayList<PilhaContainer>();
+    public Long tempoDecorrido;
+    public Carro carro;
+    public FilaNavio filaNavio;
+    public ArrayList<PilhaContainer> travessas;
 
-    public AreaAtracamento(){
-        /*mesmo sendo um vetor dinamico, ele será tratado como estático*/
+    //prepara a area de atracamento
+    public void prepare() {
+        this.tempoDecorrido = 0L;
+        //inicia a fila de navios
+        this.filaNavio = new FilaNavio();
+        //prepara a fila
+        this.filaNavio.prepare();
+
+        //inicia a lista de travessas
+        this.travessas = new ArrayList<>();
+        //for para iniciar cada travessa
         for (int i = 0; i < Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS; i++) {
-            travessas.add(new PilhaContainer());
+            PilhaContainer pilha = new PilhaContainer();
+            //prepara a travessa
+            pilha.prepare();
+            this.travessas.add(pilha);
+        }
+
+        this.carro = new Carro();
+        this.carro.prepare();
+    }
+
+    //popula a area de atracamento
+    public void popula() {
+        Random rand = new Random();
+        int qtdNavios = rand.nextInt(Constantes.MAX_NAVIOS_INICIAIS);
+        for (int i = 0; i < qtdNavios ; i++) {
+            Navio newNavio = new Navio();
+            //prepara o navio
+            newNavio.prepare();
+            //popula o navio
+            newNavio.popula();
+            this.filaNavio.enfileira(newNavio);
         }
     }
 
-    public static ArrayList<AreaAtracamento> clona(ArrayList<AreaAtracamento> areasOriginais) {
-        ArrayList<AreaAtracamento> clones = new ArrayList<>();
-        for (int i = 0; i < Constantes.MAX_QTD_AREA_ATRACAMENTO; i++) {
-            clones.add(AreaAtracamento.clona(areasOriginais.get(i)));
+    //trabalha a area de atracamento
+    public void work() {
+        //enquanto a fila nao for vazia e o tempo máximo nao for batido
+        //a area ser átrabalhada
+        while(!this.filaNavio.vazia() && (tempoDecorrido <= Constantes.TEMPO_MAXIMO)){
+            //desempilha o navio
+            Navio toWork = this.filaNavio.desinfileira().navio;
+            //trabalha o navio
+            this.trabalhaNavioPt1(toWork);
+            //todo: toString do navio
         }
-        return clones;
     }
 
-    public static AreaAtracamento clona(AreaAtracamento areaOriginal) {
-        AreaAtracamento clone = new AreaAtracamento();
-        clone.travessas = PilhaContainer.clonaTravessas(areaOriginal.travessas);
-        clone.filaNavio = FilaNavio.clona(areaOriginal.filaNavio);
-        return clone;
-    }
-
-    public void adicionaNavios(int qtdNavios, Random rand){
-        for (int i = 0; i < qtdNavios; i++) {
-            this.filaNavio.enfileira(new Navio(rand.nextInt(16), i));
-        }
-        System.out.println("");
-    }
-
-    public boolean travessasLotadas(){
-        boolean boo = true;
-        for (int i = 0; i < Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS; i++) {
-            if(this.travessas.get(i).quantidade() < Constantes.MAX_QTD_DE_CONTAINERS_POR_TRAVESSA){
-                boo = false;
+    //trabalha o navio quanto a qual travessa receberá o container
+    private void trabalhaNavioPt1(Navio navio){
+        //cópia da quantidade de containers
+        int qtdContainers = navio.qtdContainer;
+        //controlador das pilhas
+        int pilha = 0;
+        //enquanto a quantidade de containers não for zerada,
+        //onavio será trabalhado
+        while(qtdContainers > 0){
+            //se encontrar uma travessa com menos de 5 containers
+            //essa será escolhida para receber o novo container
+            if (this.travessas.get(pilha).quantidade() < 5){
+                this.trabalhaNavioPt2(navio, this.travessas.get(pilha));
             }
+            //se o controlador da pilha estiver no ultimo index, retorna-o para 0
+            //caso não, adiciona 1 ao valor
+            pilha += (pilha == Constantes.MAX_QTD_PILHA_DE_CONTAINERS-1) ? (-pilha) : 1;
+            //desconta uma unidade da quantidade de containers
+            qtdContainers--;
         }
-        return boo;
     }
 
-    public Long adicionaContainer(Container container){
-        Long tempo = 0L;
-        for (int i = 0; i < Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS; i++) {
-            if(this.travessasLotadas()){
-                tempo += Constantes.TEMPO_RETIRAR_TRAVESSA_PARA_O_PATIO * Constantes.MAX_QTD_TRAVESSAS_DE_CONTAINERS;
-            }if(this.travessas.get(i).quantidade() < Constantes.MAX_QTD_DE_CONTAINERS_POR_TRAVESSA){
-                this.travessas.get(i).empilha(container);
-                tempo+=1L;
+    //seleciona de qual pilha do navio será tirado o container
+    private void trabalhaNavioPt2(Navio navio, PilhaContainer travessa){
+        //percorre todas as pilhas de containers
+        for (int i = 0; i < Constantes.MAX_QTD_PILHA_DE_CONTAINERS; i++) {
+            //se a pilha não estiver vazia, retida dela
+            if (!navio.pilhasDeContainers.get(i).vazia()){
+                //a travessa recebe o novo container
+                travessa.empilha(navio.pilhasDeContainers.get(i).desempilha().container);
+                //é adicionado uma unidade de tempo em todos da fila
+                this.adicionarTempoEmTodaFila(Constantes.TEMPO_DESEMPILHAR_CONTAINER_GRUA);
+                //o navio recebe uma unidade de tempo
+                navio.tempo+=1L;
+                //o tempo decorrido da área de atracamento
+                this.tempoDecorrido+= 1L;
+                //rompe o laço
                 break;
             }
         }
-        return tempo;
-    }
-
-    public static void work(AreaAtracamento areaAtracamento){
-        if(areaAtracamento.filaNavio.vazia()) return;
-        FilaNavio filaAux = new FilaNavio();
-        Navio primeiroNavio = areaAtracamento.filaNavio.elementoInicio.navio, toWork = new Navio();
-        Long aux = 0L, tempoMais = 0L;
-        while (!areaAtracamento.filaNavio.vazia()){
-            toWork = areaAtracamento.filaNavio.desenfileira().navio;
-            if(toWork.trabalhado) break;
-            toWork.tempo = areaAtracamento.desenpilhaNavio(toWork);
-            toWork.tempo += tempoMais;
-            tempoMais = toWork.tempo;
-            toWork.trabalhado = true;
-            filaAux.enfileira(toWork);
-        }
-        while (!filaAux.vazia()){
-            areaAtracamento.filaNavio.enfileira(filaAux.desenfileira().navio);
+        //se a travessa estiver cheia, ela será desempilhada pelo carro
+        if(travessa.quantidade() == Constantes.MAX_QTD_DE_CONTAINERS_POR_TRAVESSA){
+            //esvazia a travessa
+            travessa.esvazia();
+            //adiciona uma viagem do carro
+            this.carro.viagens++;
+            //adiciona o dempo decorrido do carro
+            this.carro.tempoDecorrido += Constantes.TEMPO_MEDIO_CARRO;
         }
     }
 
-    public Long desenpilhaNavio(Navio navio){
-        Long tempo = 0L;
-        for (int i = 0; i < Constantes.MAX_QTD_PILHA_DE_CONTAINERS; i++) {
-            if(!navio.pilhasDeContainers.get(i).vazia()){
-                while (!navio.pilhasDeContainers.get(i).vazia()){
-                    tempo += this.adicionaContainer(navio.pilhasDeContainers.get(i).desempilha().container);
-                }
-            }
+    private void adicionarTempoEmTodaFila(Long intervalo) {
+        //fila auxiliar
+        FilaNavio aux = new FilaNavio();
+
+        //passa todos os navios para a auxiliar adicionando o intervalo aos seus tempos
+        while(!this.filaNavio.vazia()){
+            //desenfileira um navio
+            Navio navio = this.filaNavio.desinfileira().navio;
+            //adiciona o intervalo de tempo
+            navio.tempo += intervalo;
+            //o coloca na auxiliar
+            aux.enfileira(navio);
         }
-        return tempo;
+
+        //agora é passado para a original os navios
+        while(!aux.vazia()){
+            this.filaNavio.enfileira(aux.desinfileira().navio);
+        }
     }
 }
