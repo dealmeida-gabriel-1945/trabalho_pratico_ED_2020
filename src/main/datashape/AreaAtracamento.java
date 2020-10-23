@@ -70,7 +70,6 @@ public class AreaAtracamento {
 
     //trabalha a area de atracamento
     public void work() {
-        this.quantidadeNaviosTotal+= this.quantidadeNaviosInical;
         //enquanto a fila nao for vazia e o tempo máximo nao for batido
         //a area ser átrabalhada
         while(!this.filaNavio.vazia() && (tempoDecorrido <= Constantes.TEMPO_MAXIMO)){
@@ -83,6 +82,7 @@ public class AreaAtracamento {
             wl.prepare(toWork);
             //guarda o worklog do na fila
             this.filaWorklogNavios.enfileira(wl);
+            this.quantidadeNaviosTotal+= 1L;
         }
     }
 
@@ -150,7 +150,6 @@ public class AreaAtracamento {
     private void adicionaNovosNavios() {
         Random rand = new Random();
         int qtdNovosNavios = rand.nextInt(Constantes.MAX_NOVOS_NAVIOS + 1);
-        this.quantidadeNaviosTotal+= qtdNovosNavios;
         for (int i = 0; i < qtdNovosNavios; i++) {
             Navio toAdd = new Navio();
             toAdd.prepare();
